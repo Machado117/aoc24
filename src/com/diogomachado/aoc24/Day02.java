@@ -30,26 +30,45 @@ public class Day02 {
     private long part1() {
         int safeCount = 0;
         for (List<Integer> report : this.reports) {
-            boolean safeReport = true;
-            boolean ascOrder = report.get(0) < report.get(1);
-            Integer prev = report.get(0);
-            for (int j = 1; safeReport && j < report.size(); j++) {
-                Integer cur = report.get(j);
-                int difference = cur - prev;
-                if (difference * (ascOrder ? 1 : -1) <= 0 || Math.abs(difference) > 3) {
-                    safeReport = false;
-                }
-                prev = cur;
-            }
-            if (safeReport) {
+            if (isSafeReport(report)) {
                 safeCount++;
             }
         }
         return safeCount;
     }
 
+    private static boolean isSafeReport(final List<Integer> report) {
+        boolean safeReport = true;
+        boolean ascOrder = report.get(0) < report.get(1);
+        Integer prev = report.get(0);
+        for (int j = 1; safeReport && j < report.size(); j++) {
+            Integer cur = report.get(j);
+            int difference = cur - prev;
+            if (difference * (ascOrder ? 1 : -1) <= 0 || Math.abs(difference) > 3) {
+                safeReport = false;
+            }
+            prev = cur;
+        }
+        return safeReport;
+    }
+
     private long part2() {
-        return -1;
+        int safeCount = 0;
+        for (List<Integer> report : this.reports) {
+            if (isSafeReport(report)) {
+                safeCount++;
+            } else {
+                for (int i = 0; i < report.size(); i++) {
+                    List<Integer> dampenedReport = new ArrayList<>(report);
+                    dampenedReport.remove(i);
+                    if (isSafeReport(dampenedReport)) {
+                        safeCount++;
+                        break;
+                    }
+                }
+            }
+        }
+        return safeCount;
     }
 
     public static void main(String[] args) {
