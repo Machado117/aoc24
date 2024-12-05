@@ -12,10 +12,10 @@ import java.util.stream.Collectors;
 
 public class Day01 {
 
-    final List<Long> leftList = new ArrayList<>();
-    final List<Long> rightList = new ArrayList<>();
+    private final List<Long> leftList = new ArrayList<>();
+    private final List<Long> rightList = new ArrayList<>();
 
-    public Day01(final String input) {
+    private Day01(final String input) {
         readInput(input);
     }
 
@@ -31,7 +31,7 @@ public class Day01 {
         }
     }
 
-    public long part1() {
+    private long part1() {
         final List<Long> leftListCopy = new ArrayList<>(this.leftList);
         final List<Long> rightListCopy = new ArrayList<>(this.rightList);
         Collections.sort(leftListCopy);
@@ -44,7 +44,7 @@ public class Day01 {
         return sum;
     }
 
-    public long part2() {
+    private long part2() {
         final Map<Long, Integer> rightListCounter = this.rightList.stream()
                                                                .collect(Collectors.toMap(Function.identity(),
                                                                                          value -> 1,
