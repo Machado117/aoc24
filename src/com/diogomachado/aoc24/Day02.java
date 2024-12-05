@@ -28,13 +28,7 @@ public class Day02 {
     }
 
     private long part1() {
-        int safeCount = 0;
-        for (List<Integer> report : this.reports) {
-            if (isSafeReport(report)) {
-                safeCount++;
-            }
-        }
-        return safeCount;
+        return this.reports.stream().filter(Day02::isSafeReport).count();
     }
 
     private static boolean isSafeReport(final List<Integer> report) {
