@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 public class Day05 {
@@ -43,17 +44,15 @@ public class Day05 {
     private long part1() {
         long middleSum = 0;
         for (List<Integer> update : updates) {
-            Set<Integer> verifiedPages = new HashSet<>();
+            List<Integer> verifiedPages = new ArrayList<>();
             boolean validUpdate = true;
             for (Integer page : update) {
-                boolean brokenRule = false;
-                for (Integer succeeder : orderingRules.getOrDefault(page, new HashSet<>())) {
-                    if (verifiedPages.contains(succeeder)) {
-                        brokenRule = true;
-                        break;
-                    }
-                }
-                if (brokenRule) {
+                Set<Integer> pageConstraints = orderingRules.get(page);
+                final Optional<Integer> any = verifiedPages.stream()
+                                                           .filter(precedingPage -> pageConstraints != null
+                                                                   && pageConstraints.contains(precedingPage))
+                                                           .findAny();
+                if (any.isPresent()) {
                     validUpdate = false;
                     break;
                 } else {
