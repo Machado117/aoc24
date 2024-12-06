@@ -7,7 +7,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -67,7 +69,36 @@ public class Day05 {
     }
 
     private long part2() {
-        return -1;
+        long middleSum = 0;
+        for (List<Integer> update : updates) {
+            List<Integer> verifiedPages = new LinkedList<>();
+            boolean outOfOrderUpdate = false;
+            for (Integer page : update) {
+                boolean outOfOrderPage = false;
+                Set<Integer> pageConstraints = orderingRules.get(page);
+                if (pageConstraints != null) {
+                    final ListIterator<Integer> iterator = verifiedPages.listIterator();
+                    while (iterator.hasNext()) {
+                        final Integer next = iterator.next();
+                        if (pageConstraints.contains(next)) {
+                            outOfOrderPage = true;
+                            iterator.set(page);
+                            iterator.add(next);
+                            break;
+                        }
+                    }
+                }
+                if (outOfOrderPage) {
+                    outOfOrderUpdate = true;
+                } else {
+                    verifiedPages.add(page);
+                }
+            }
+            if (outOfOrderUpdate) {
+                middleSum += verifiedPages.get(update.size() / 2);
+            }
+        }
+        return middleSum;
     }
 
     public static void main(String[] args) {
