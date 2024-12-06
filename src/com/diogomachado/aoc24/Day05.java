@@ -4,11 +4,17 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class Day05 {
 
-    private final List<Long> inputValues = new ArrayList<>();
+    private final Map<Integer, Set<Integer>> orderingRules = new HashMap<>();
+    private final List<List<Integer>> updates = new ArrayList<>();
 
     private Day05(final String input) {
         readInput(input);
@@ -17,17 +23,48 @@ public class Day05 {
     private void readInput(final String path) {
         try (final BufferedReader reader = new BufferedReader(new FileReader(path))) {
             String line;
-            while ((line = reader.readLine()) != null) {
-                long value = Long.parseLong(line);
-                inputValues.add(value);
+            while (!(line = reader.readLine()).isEmpty()) {
+                String[] rule = line.split("\\|");
+                Integer leftPage = Integer.parseInt(rule[0]);
+                Integer rightPage = Integer.parseInt(rule[1]);
+                final Set<Integer> precedences = orderingRules.computeIfAbsent(leftPage, k -> new HashSet<>());
+                precedences.add(rightPage);
             }
+            while ((line = reader.readLine()) != null) {
+                String[] update = line.split(",");
+                updates.add(Arrays.stream(update).map(Integer::parseInt).toList());
+            }
+
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
     private long part1() {
-        return -1;
+        long middleSum = 0;
+        for (List<Integer> update : updates) {
+            Set<Integer> verifiedPages = new HashSet<>();
+            boolean validUpdate = true;
+            for (Integer page : update) {
+                boolean brokenRule = false;
+                for (Integer succeeder : orderingRules.getOrDefault(page, new HashSet<>())) {
+                    if (verifiedPages.contains(succeeder)) {
+                        brokenRule = true;
+                        break;
+                    }
+                }
+                if (brokenRule) {
+                    validUpdate = false;
+                    break;
+                } else {
+                    verifiedPages.add(page);
+                }
+            }
+            if (validUpdate) {
+                middleSum += update.get(update.size() / 2);
+            }
+        }
+        return middleSum;
     }
 
     private long part2() {
